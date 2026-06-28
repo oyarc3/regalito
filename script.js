@@ -2,416 +2,247 @@
 // ELEMENTOS
 // ===============================
 
-const pages = document.querySelectorAll(".page");
-const steps = document.querySelectorAll(".step");
-const canams = document.querySelectorAll(".canam");
-const gifts = document.querySelectorAll(".gift");
+document.addEventListener("DOMContentLoaded", () => {
 
-const music = document.getElementById("music");
-const restart = document.getElementById("restart");
-const particles = document.getElementById("particles");
+    const pages = document.querySelectorAll(".page");
+    const steps = document.querySelectorAll(".step");
+    const canams = document.querySelectorAll(".canam");
+    const gifts = document.querySelectorAll(".gift");
 
-let current = 0;
-let musicStarted = false;
-let busy = false;
+    const music = document.getElementById("music");
+    const restartBtn = document.getElementById("restart");
+    const particles = document.getElementById("particles");
+    const finalText = document.querySelector(".final p");
+    const giftImage = document.querySelector(".gift-image");
 
-// ===============================
-// CAMBIAR PANTALLA
-// ===============================
+    let current = 0;
+    let musicStarted = false;
 
-function showPage(index){
+    // ===============================
+    // MOSTRAR PÁGINA
+    // ===============================
 
-    pages[current].style.opacity="0";
+    function showPage(index) {
 
-    pages[current].style.transform="translateY(30px)";
-
-    setTimeout(()=>{
-
-        pages.forEach(page=>{
-
-            page.classList.remove("active");
-
-            page.style.opacity="";
-
-            page.style.transform="";
-
+        pages.forEach(p => {
+            p.classList.remove("active");
         });
 
-        steps.forEach(step=>step.classList.remove("active"));
+        steps.forEach(s => {
+            s.classList.remove("active");
+        });
 
         pages[index].classList.add("active");
-
         steps[index].classList.add("active");
 
-        current=index;
+        current = index;
+    }
 
-    },250);
+    // ===============================
+    // MÚSICA
+    // ===============================
 
-}
+    function startMusic() {
 
-    pages.forEach(page=>page.classList.remove("active"));
-    steps.forEach(step=>step.classList.remove("active"));
+        if (musicStarted) return;
 
-    pages[index].classList.add("active");
-    steps[index].classList.add("active");
+        musicStarted = true;
 
-    current=index;
+        music.volume = 0;
 
-}
+        music.play().catch(() => {});
 
-// ===============================
-// SIGUIENTE
-// ===============================
+        let v = 0;
 
-function nextPage(){
+        const fade = setInterval(() => {
 
-    if(busy) return;
+            v += 0.03;
+            music.volume = v;
 
-    if(current>=pages.length-1) return;
+            if (v >= 1) clearInterval(fade);
 
-    busy=true;
+        }, 100);
+    }
 
-    setTimeout(()=>{
+    // ===============================
+    // CAN-AM CLICK
+    // ===============================
 
-        showPage(current+1);
+    canams.forEach(canam => {
 
-        busy=false;
+        canam.addEventListener("click", () => {
 
-        if(current===pages.length-1){
+            startMusic();
 
-    revealGift();
+            canam.style.transform = "translateX(400px) rotate(8deg)";
 
-}
+            setTimeout(() => {
 
-    },450);
+                canam.style.transform = "";
+                showPage(current + 1);
 
-}
-
-// ===============================
-// MÚSICA
-// ===============================
-
-function startMusic(){
-
-    if(musicStarted) return;
-
-    musicStarted=true;
-
-    music.volume=0;
-
-    music.play().catch(()=>{});
-
-    let volume=0;
-
-    const fade=setInterval(()=>{
-
-        volume+=0.05;
-
-        if(volume>=1){
-
-            volume=1;
-
-            clearInterval(fade);
-
-        }
-
-        music.volume=volume;
-
-    },100);
-
-}
-
-// ===============================
-// CANAM
-// ===============================
-
-canams.forEach(canam=>{
-
-    canam.addEventListener("click",()=>{
-
-        startMusic();
-
-        canam.style.transition="0.45s";
-
-        canam.style.transform="translateX(420px) rotate(8deg)";
-
-        setTimeout(()=>{
-
-            canam.style.transform="";
-
-            nextPage();
-
-        },420);
-
-    });
-
-});
-
-// ===============================
-// CAJAS
-// ===============================
-
-gifts.forEach(gift=>{
-
-    gift.addEventListener("click",()=>{
-
-        gift.animate([
-
-            {transform:"scale(1) rotate(0deg)"},
-
-            {transform:"scale(.9) rotate(-3deg)"},
-
-            {transform:"scale(1.08) rotate(3deg)"},
-
-            {transform:"scale(1)"}
-
-        ],{
-
-            duration:450
+            }, 450);
 
         });
 
-        if(navigator.vibrate){
+    });
 
-            navigator.vibrate(60);
+    // ===============================
+    // CAJAS CLICK
+    // ===============================
 
-        }
+    gifts.forEach(gift => {
 
-        setTimeout(()=>{
+        gift.addEventListener("click", () => {
 
-            nextPage();
+            gift.animate([
 
-        },350);
+                { transform: "scale(1)" },
+                { transform: "scale(0.92)" },
+                { transform: "scale(1.08)" },
+                { transform: "scale(1)" }
+
+            ], {
+
+                duration: 400
+
+            });
+
+            if (navigator.vibrate) navigator.vibrate(50);
+
+            setTimeout(() => {
+
+                if (current < pages.length - 1) {
+
+                    showPage(current + 1);
+
+                }
+
+                // si llega al final
+                if (current === pages.length - 1) {
+
+                    revealFinal();
+
+                }
+
+            }, 300);
+
+        });
 
     });
 
-});
+    // ===============================
+    // FINAL (REGALO)
+    // ===============================
 
-// ===============================
-// CONFETI FINAL
-// ===============================
+    function revealFinal() {
 
-function finalAnimation(){
+        // flash blanco
+        const flash = document.createElement("div");
 
-    confetti({
+        flash.style.position = "fixed";
+        flash.style.top = 0;
+        flash.style.left = 0;
+        flash.style.width = "100vw";
+        flash.style.height = "100vh";
+        flash.style.background = "white";
+        flash.style.zIndex = 9999;
+        flash.style.opacity = 0;
+        flash.style.transition = "0.4s";
 
-        particleCount:180,
+        document.body.appendChild(flash);
 
-        spread:90,
+        setTimeout(() => flash.style.opacity = 1, 50);
 
-        origin:{y:.6}
+        setTimeout(() => flash.style.opacity = 0, 400);
 
-    });
+        setTimeout(() => flash.remove(), 800);
 
-}
+        // confeti (si tienes librería cargada)
+        if (typeof confetti === "function") {
 
-// ===============================
-// CORAZONES
-// ===============================
-
-function createHeart(){
-
-    const heart=document.createElement("div");
-
-    heart.className="heart";
-
-    heart.innerHTML="❤";
-
-    heart.style.left=Math.random()*100+"vw";
-
-    heart.style.animationDuration=(6+Math.random()*5)+"s";
-
-    heart.style.fontSize=(12+Math.random()*22)+"px";
-
-    particles.appendChild(heart);
-
-    setTimeout(()=>{
-
-        heart.remove();
-
-    },11000);
-
-}
-
-setInterval(createHeart,700);
-
-// ===============================
-// REINICIAR
-// ===============================
-
-restart.addEventListener("click",()=>{
-
-    current=0;
-
-    showPage(0);
-
-    window.scrollTo(0,0);
-
-    confetti.reset?.();
-
-});
-// ==========================================
-// REVELACIÓN FINAL
-// ==========================================
-
-const finalPage = document.querySelector(".final");
-const giftImage = document.querySelector(".gift-image");
-
-function revealGift(){
-setTimeout(()=>{
-
-    typeWriter();
-
-},1200);
-
-    // baja un poco la música
-    let fade = setInterval(()=>{
-
-        if(music.volume > 0.45){
-
-            music.volume -= 0.03;
-
-        }else{
-
-            clearInterval(fade);
+            confetti({
+                particleCount: 250,
+                spread: 120,
+                origin: { y: 0.6 }
+            });
 
         }
 
-    },120);
+        // mostrar imagen regalo
+        if (giftImage) {
 
-    // flash blanco
-    const flash=document.createElement("div");
+            giftImage.style.opacity = 0;
+            giftImage.style.transform = "scale(0.7)";
+            giftImage.style.transition = "1.2s";
 
-    flash.style.position="fixed";
-    flash.style.left="0";
-    flash.style.top="0";
-    flash.style.width="100vw";
-    flash.style.height="100vh";
-    flash.style.background="white";
-    flash.style.opacity="0";
-    flash.style.transition=".5s";
-    flash.style.zIndex="9999";
+            setTimeout(() => {
 
-    document.body.appendChild(flash);
+                giftImage.style.opacity = 1;
+                giftImage.style.transform = "scale(1)";
 
-    setTimeout(()=>{
-
-        flash.style.opacity="1";
-
-    },80);
-
-    setTimeout(()=>{
-
-        flash.style.opacity="0";
-
-    },450);
-
-    setTimeout(()=>{
-
-        flash.remove();
-
-    },900);
-
-    confetti({
-
-        particleCount:300,
-
-        spread:180,
-
-        startVelocity:50,
-
-        scalar:1.3
-
-    });
-
-    giftImage.style.opacity="0";
-    giftImage.style.transform="scale(.6)";
-
-    setTimeout(()=>{
-
-        giftImage.style.transition="1.3s";
-
-        giftImage.style.opacity="1";
-
-        giftImage.style.transform="scale(1)";
-
-    },400);
-
-}
-const finalText=document.querySelector(".final p");
-
-const originalText=finalText.innerHTML;
-
-finalText.innerHTML="";
-
-function typeWriter(){
-
-    let i=0;
-
-    const typing=setInterval(()=>{
-
-        finalText.innerHTML+=originalText.charAt(i);
-
-        i++;
-
-        if(i>=originalText.length){
-
-            clearInterval(typing);
+            }, 200);
 
         }
 
-    },35);
+        // texto final
+        if (finalText) {
 
-}
-// ===============================
-// REINICIAR EXPERIENCIA COMPLETA
-// ===============================
+            const text = finalText.innerHTML;
+            finalText.innerHTML = "";
 
-function restartExperience(){
+            let i = 0;
 
-    current = 0;
+            const typing = setInterval(() => {
 
-    pages.forEach(page => page.classList.remove("active"));
-    steps.forEach(step => step.classList.remove("active"));
+                finalText.innerHTML += text.charAt(i);
+                i++;
 
-    pages[0].classList.add("active");
-    steps[0].classList.add("active");
+                if (i >= text.length) clearInterval(typing);
 
-    music.pause();
-    music.currentTime = 0;
-    music.volume = 1;
-    musicStarted = false;
+            }, 25);
 
-    if(giftImage){
+        }
+    }
 
-        giftImage.style.opacity = "";
-        giftImage.style.transform = "";
-        giftImage.style.transition = "";
+    // ===============================
+    // CORAZONES
+    // ===============================
+
+    function createHeart() {
+
+        if (!particles) return;
+
+        const heart = document.createElement("div");
+
+        heart.className = "heart";
+        heart.innerHTML = "❤";
+
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = (5 + Math.random() * 5) + "s";
+        heart.style.fontSize = (12 + Math.random() * 20) + "px";
+
+        particles.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 10000);
 
     }
 
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
+    setInterval(createHeart, 600);
+
+    // ===============================
+    // REINICIAR
+    // ===============================
+
+    restartBtn?.addEventListener("click", () => {
+
+        current = 0;
+        showPage(0);
+
+        music.pause();
+        music.currentTime = 0;
+        musicStarted = false;
+
     });
-
-}
-
-restart.addEventListener("click", restartExperience);
-// ===============================
-// ENTRADA SUAVE
-// ===============================
-
-window.addEventListener("load",()=>{
-
-    document.body.style.opacity="0";
-
-    document.body.style.transition="1s";
-
-    setTimeout(()=>{
-
-        document.body.style.opacity="1";
-
-    },100);
 
 });
