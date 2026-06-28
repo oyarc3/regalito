@@ -68,7 +68,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // CAN-AM CLICK
     // ===============================
 
-    canams.forEach(canam => {
+    console.log("Buscando Can-Am...");
+
+document.addEventListener("click", () => {
+    console.log("CLICK GENERAL FUNCIONA");
+});
 
         canam.addEventListener("click", () => {
 
