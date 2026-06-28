@@ -66,10 +66,10 @@ constgiftImage = document.querySelector(".gift-image");
     }
 
     // ===============================
-    // CAN-AM CLICK
+    // canam CLICK
     // ===============================
 
-    console.log("Buscando Can-Am...");
+    console.log("Buscando canam...");
 
 document.addEventListener("click", () => {
     console.log("CLICK GENERAL FUNCIONA");
