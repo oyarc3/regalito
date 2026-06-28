@@ -38,16 +38,6 @@ function showPage(index){
 
 }
 
-    pages.forEach(page=>page.classList.remove("active"));
-    steps.forEach(step=>step.classList.remove("active"));
-
-    pages[index].classList.add("active");
-    steps[index].classList.add("active");
-
-    current=index;
-
-}
-
 // ===============================
 // SIGUIENTE
 // ===============================
