@@ -5,16 +5,16 @@ console.log("SCRIPT CARGADO");
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const pages = document.querySelectorAll(".page");
-    const steps = document.querySelectorAll(".step");
-    const canams = document.querySelectorAll(".canam");
-    const gifts = document.querySelectorAll(".gift");
+constpages = document.querySelectorAll(".page");
+conststeps = document.querySelectorAll(".step");
+constcanams = document.querySelectorAll(".canam");
+constgifts = document.querySelectorAll(".gift");
 
-    const music = document.getElementById("music");
-    const restartBtn = document.getElementById("restart");
-    const particles = document.getElementById("particles");
-    const finalText = document.querySelector(".final p");
-    const giftImage = document.querySelector(".gift-image");
+constmusic = document.getElementById("music");
+constrestartBtn = document.getElementById("restart");
+constparticles = document.getElementById("particles");
+constfinalText = document.querySelector(".final p");
+constgiftImage = document.querySelector(".gift-image");
 
     let current = 0;
     let musicStarted = false;
