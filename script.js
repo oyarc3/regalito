@@ -18,32 +18,21 @@ let busy = false;
 // ===============================
 // CAMBIAR PANTALLA
 // ===============================
-
 function showPage(index){
 
-    pages[current].style.opacity="0";
+    pages.forEach(page => {
+        page.classList.remove("active");
+        page.style.opacity = "";
+        page.style.transform = "";
+    });
 
-    pages[current].style.transform="translateY(30px)";
+    steps.forEach(step => step.classList.remove("active"));
 
-    setTimeout(()=>{
+    pages[index].classList.add("active");
+    steps[index].classList.add("active");
 
-        pages.forEach(page=>{
-
-            page.classList.remove("active");
-
-            page.style.opacity="";
-
-            page.style.transform="";
-
-        });
-
-        steps.forEach(step=>step.classList.remove("active"));
-
-        pages[index].classList.add("active");
-
-        steps[index].classList.add("active");
-
-        current=index;
+    current = index;
+}
 
     },250);
 
